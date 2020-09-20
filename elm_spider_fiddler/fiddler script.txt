@@ -1,0 +1,20 @@
+    static function OnBeforeResponse(oSession: Session) {
+        if (m_Hide304s && oSession.responseCode == 304) {
+            oSession["ui-hide"] = "true";
+        }
+        //过滤无关请求，只关注特定请求
+        if (oSession.fullUrl.Contains("自定义URL")) {
+            oSession.utilDecodeResponse();
+            //消除保存的请求可能存在乱码的情况
+            var fso;
+            var file;
+            fso = new ActiveXObject("Scripting.FileSystemObject");
+            //文件保存路径，可自定义
+            file = fso.OpenTextFile("自定义文件位置",8 ,true, true);
+            file.writeLine("Response code: " + oSession.responseCode);
+            file.writeLine("Response body: " + oSession.GetResponseBodyAsString());
+            file.writeLine("\n");
+            file.close();
+
+        }
+    }
